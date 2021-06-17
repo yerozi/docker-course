@@ -1,0 +1,22 @@
+▽▽▽▽▽▽▽▽▽▽master▽▽▽▽▽▽▽▽▽▽
+docker pull busybox
+docker pull registry
+mkdir -p /home/docker/system/centos7
+cd /home/docker/system/centos7
+mv ~/centos-7-x86_64-docker.tar.xz .
+vim Dockerfile
+△△△△△△△△△△master△△△△△△△△△△
+▽▽▽▽▽▽▽▽▽▽Dockerfile▽▽▽▽▽▽▽▽▽▽
+FROM scratch
+ADD centos-7-x86_64-docker.tar.xz /
+CMD ["/bin/bash"]
+△△△△△△△△△△Dockerfile△△△△△△△△△△
+▽▽▽▽▽▽▽▽▽▽master▽▽▽▽▽▽▽▽▽▽
+tar cv --files-from /dev/null | docker import - scratch
+docker images
+docker build -t mycentos7:v1.0 .
+docker images
+docker run --name mycentos7-1 -it mycentos7:v1.0
+docker ps -a
+cd
+△△△△△△△△△△master△△△△△△△△△△

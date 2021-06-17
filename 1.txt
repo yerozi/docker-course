@@ -1,0 +1,30 @@
+echo "192.168.58.99 master" >> /etc/hosts  
+echo "192.168.58.101 node1" >> /etc/hosts  
+
+hostnamectl set-hostname master    
+systemctl start sshd    
+systemctl enable sshd     
+iptables -F   
+iptables -X   
+iptables -Z   
+iptables-save     
+systemctl stop firewalld     
+systemctl disable firewalld      
+setenforce 0      
+echo 'net.ipv4.ip_forward = 1' >> /etc/sysctl.conf     
+echo 'net.ipv4.conf.default.rp_filter = 0' >> /etc/sysctl.conf      
+echo 'net.ipv4.conf.all.rp_filter = 0' >> /etc/sysctl.conf      
+sysctl -p      
+
+
+
+curl -sSL https://get.daocloud.io/docker | sh  
+
+
+mkdir -p /etc/docker  
+touch /etc/docker/daemon.json  
+echo '{' >> /etc/docker/daemon.json   
+echo '  "registry-mirrors": ["https://bv9s0ceh.mirror.aliyuncs.com"]' >> /etc/docker/daemon.json   
+echo '}' >> /etc/docker/daemon.json   
+systemctl daemon-reload   
+systemctl restart docker  

@@ -1,0 +1,45 @@
+
+▽▽▽▽▽▽▽▽▽▽master▽▽▽▽▽▽▽▽▽▽
+docker run -d --name nsv11 -v ~/nsv11-data:/usr/local/nginx/html/ -p 10011:80 mynginx:v1.0 
+ls
+echo "Test for nsv11." > ./nsv11-data/index.html
+curl master:10011
+docker inspect nsv11 --format "{{.Mounts}}"
+docker run -d --name nsv21 -v /usr/local/nginx/html/ -p 10021:80 mynginx:v1.0 
+curl master:10021
+docker inspect nsv21 --format "{{.Mounts}}"
+docker volume create myvolume22 
+docker run -d --name nsv22 -v myvolume22:/usr/local/nginx/html/ -p 10022:80 mynginx:v1.0 
+docker inspect nsv22 --format "{{.Mounts}}"
+echo "Test for nsv22." > /var/lib/docker/volumes/myvolume22/_data/index.html 
+curl master:10022
+docker volume inspect myvolume22 
+docker run -d --name dvc31 -v ~/dvc31-data:/usr/local/nginx/html/ busybox
+docker run -d --name nsv31 --volumes-from dvc31 -p 10031:80 mynginx:v1.0 
+echo "Test for nsv31." > ~/dvc31-data/index.html
+curl master:10031
+docker run --rm --volumes-from dvc31 -v $(pwd):/backup --name databackup busybox tar cvf /backup/backup.tar /usr/local/nginx/html/
+ls
+rm -rf dvc31-data/
+docker run --rm --volumes-from dvc31 -v $(pwd):/backup --name datarestore busybox tar xvf /backup/backup.tar
+mount /dev/sr0 /mnt/cdrom/
+yum install -y nfs-utils
+echo "/nfs-root 192.168.58.0/24(rw,sync,no_root_squash)" >> /etc/exports
+ps -ef | grep nfs
+cat /etc/exports
+systemctl restart nfs
+ps -ef | grep nfs
+mkdir /nfs-root
+cd /nfs-root/
+echo "Test for nsv41(nfs)." > /nfs-root/index.html
+docker tag mynginx:v1.0 192.168.58.99:5000/mynginx:v1.0
+docker push 192.168.58.99:5000/mynginx:v1.0 
+△△△△△△△△△△master△△△△△△△△△△
+▽▽▽▽▽▽▽▽▽▽node1▽▽▽▽▽▽▽▽▽▽
+mount /dev/sr0 /mnt/cdrom
+yum install -y showmount
+docker pull 192.168.7.10:5000/mynginx:v1.0
+docker volume create --driver local --opt type=nfs --opt o=addr=192.168.7.10,rw --opt device=:/nfs-root myvolume41-nfs
+docker run -d --name nsv41 -v myvolume41-nfs:/usr/local/nginx/html/ -p 10041:80 192.168.7.10:5000/mynginx:v1.0 
+curl node1:10041
+△△△△△△△△△△node1△△△△△△△△△△

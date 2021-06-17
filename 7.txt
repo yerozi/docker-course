@@ -1,0 +1,29 @@
+▽▽▽▽▽▽▽▽▽▽master▽▽▽▽▽▽▽▽▽▽
+cd
+docker run -d --name nsx1 -P mynginx:v1.0 
+ip addr add 192.168.58.201/24 dev ens33
+ip addr add 192.168.58.202/24 dev ens33
+docker run -d --name nsx21 -p 192.168.58.201:20001:80 mynginx:v1.0 
+docker run -d --name nsx22 -p 192.168.58:202::80 mynginx:v1.0 
+docker run -d --name nsx23 -p 20003:80 mynginx:v1.0
+docker ps --format "{{.Names}}\t{{.Ports}}" | grep nsx
+curl 192.168.58.99:32768
+curl 192.168.58.201:32768
+curl 192.168.58.201:20001
+curl 192.168.58.202:32769
+curl 192.168.58.99:20003
+docker run -d --name ns-noport mynginx:v1.0 
+docker run -it --name linktons --link ns-noport:linktons busybox
+docker port ns-noport 
+docker inspect ns-noport --format "{{.Name}}    {{.NetworkSettings.IPAddress}}"
+docker network create --driver=bridge --subnet=192.168.1.0/24 --ip-range=192.168.1.0/24 --gateway=192.168.1.254 mynet
+docker network ls
+docker run -d --name nsy1 -P --network mynet mynginx:v1.0
+docker run -d --name nsy2 -P mynginx:v1.0 
+docker inspect nsy1 | grep IPAddress
+docker inspect nsy2 | grep IPAddress
+docker network disconnect bridge nsy2
+docker network connect mynet nsy2
+docker inspect nsy2 | grep IPAddress
+docker network inspect mynet
+△△△△△△△△△△master△△△△△△△△△△

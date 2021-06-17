@@ -1,0 +1,71 @@
+
+▽▽▽▽▽▽▽▽▽▽master▽▽▽▽▽▽▽▽▽▽
+yum install -y tree
+tree
+touch docker-compose.yml
+tree
+cd
+docker tag scratch 192.168.7.10:5000/scratch:latest
+docker push 192.168.7.10:5000/scratch:latest 
+△△△△△△△△△△master△△△△△△△△△△
+▽▽▽▽▽▽▽▽▽▽node1▽▽▽▽▽▽▽▽▽▽
+curl -X GET http://192.168.7.10:5000/v2/_catalog
+curl -X GET http://192.168.7.10:5000/v2/busybox/tags/list
+curl -X GET http://192.168.7.10:5000/v2/scratch/tags/list
+mount | grep nfs-root
+docker images -a
+docker ps -a
+tree /home/docker
+△△△△△△△△△△node1△△△△△△△△△△
+▽▽▽▽▽▽▽▽▽▽master▽▽▽▽▽▽▽▽▽▽
+curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-(uname -m)" -o /usr/local/bin/docker-compose
+curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose 
+docker-compose --version
+scp /usr/local/bin/docker-compose node1:/usr/local/bin/docker-compose 
+△△△△△△△△△△master△△△△△△△△△△
+▽▽▽▽▽▽▽▽▽▽node1▽▽▽▽▽▽▽▽▽▽
+ls /usr/local/bin/docker-compose -l
+vim docker-compose.yml
+▽▽▽▽▽▽▽▽▽▽docker-compose.yml▽▽▽▽▽▽▽▽▽▽
+version: "3"
+services:
+    myweb:
+        build: ./runtime/nginx/
+        image: mgnginx:v1.0
+        volumes:
+            - "db:/usr/local/nginx/html/"
+        ports:
+            - "10080:80"
+        networks:
+            - br1
+        depends_on:
+            - centos7
+    centos7:
+        build: ./system/centos7/
+        image: mycentos7:v1.0
+volumes:
+    db:
+        driver: local
+        driver_opts:
+            type: "nfs"
+            o: "addr=192.168.7.10,rw"
+            device: ":/nfs-root"
+networks:
+    br1:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 192.168.1.0/24
+△△△△△△△△△△docker-compose.yml△△△△△△△△△△
+docker-compose up -d
+curl node1:10080
+docker network ls | grep br1
+docker network inspect docker_br1 | grep Subnet
+docker volume ls | grep db
+docker volume inspect docker_db
+docker images
+docker ps -a
+△△△△△△△△△△node1△△△△△△△△△△
+

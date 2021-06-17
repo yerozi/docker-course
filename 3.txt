@@ -1,0 +1,36 @@
+▽▽▽▽▽▽▽▽▽▽master▽▽▽▽▽▽▽▽▽▽
+mkdir -p /home/docker/runtime/nginx
+cd /home/docker/runtime/nginx/
+mv ~/nginx-1.14.0.tar.gz . && wget -c https://nginx.org/download/nginx-1.14.0.tar.gz
+yum install -y httpd
+mkdir /var/www/html/centos7
+mount /dev/sr0 /var/www/html/centos7/
+vim centos.repo
+▽▽▽▽▽▽▽▽▽▽centos.repo▽▽▽▽▽▽▽▽▽▽
+[centos7-network]
+name=centos 7 network repo
+baseurl=http://192.168.7.10/centos7/
+gpgcheck=0
+△△△△△△△△△△centos.repo△△△△△△△△△△
+▽▽▽▽▽▽▽▽▽▽master▽▽▽▽▽▽▽▽▽▽
+vim Dockerfile
+△△△△△△△△△△master△△△△△△△△△△
+▽▽▽▽▽▽▽▽▽▽Dockerfile▽▽▽▽▽▽▽▽▽▽
+FROM mycentos7:v1.0
+COPY centos.repo /etc/yum.repos.d/
+RUN rm -rf /etc/yum.repos.d/C* && yum clean all && yum makecache
+RUN yum install -y gcc gcc-c++ make && yum install -y pcre pcre-devel && yum install -y zlib zlib-devel
+ADD nginx-1.14.0.tar.gz /usr/share/
+WORKDIR /usr/share/nginx-1.14.0/
+RUN ./configure && make && make install
+ENV PATH=$PATH:/usr/local/nginx/sbin/
+RUN echo "My Nginx based Docker." > /usr/local/nginx/html/index.html
+EXPOSE 80
+CMD ["nginx","-g","daemon off;"]
+△△△△△△△△△△Dockerfile△△△△△△△△△△
+▽▽▽▽▽▽▽▽▽▽master▽▽▽▽▽▽▽▽▽▽
+systemctl restart httpd
+docker build -t mynginx:v1.0 .
+docker run --name nginxserver1 -d -p 8888:80 mynginx:v1.0 
+curl 192.168.58.99:8888
+△△△△△△△△△△master△△△△△△△△△△
