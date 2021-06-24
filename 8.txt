@@ -5,13 +5,13 @@ tree
 touch docker-compose.yml
 tree
 cd
-docker tag scratch 192.168.7.10:5000/scratch:latest
-docker push 192.168.7.10:5000/scratch:latest 
+docker tag scratch 192.168.58.99:5000/scratch:latest
+docker push 192.168.58.99:5000/scratch:latest 
 △△△△△△△△△△master△△△△△△△△△△
 ▽▽▽▽▽▽▽▽▽▽node1▽▽▽▽▽▽▽▽▽▽
-curl -X GET http://192.168.7.10:5000/v2/_catalog
-curl -X GET http://192.168.7.10:5000/v2/busybox/tags/list
-curl -X GET http://192.168.7.10:5000/v2/scratch/tags/list
+curl -X GET http://192.168.58.99:5000/v2/_catalog
+curl -X GET http://192.168.58.99:5000/v2/busybox/tags/list
+curl -X GET http://192.168.58.99:5000/v2/scratch/tags/list
 mount | grep nfs-root
 docker images -a
 docker ps -a
@@ -49,7 +49,7 @@ volumes:
         driver: local
         driver_opts:
             type: "nfs"
-            o: "addr=192.168.7.10,rw"
+            o: "addr=192.168.58.99,rw"
             device: ":/nfs-root"
 networks:
     br1:
