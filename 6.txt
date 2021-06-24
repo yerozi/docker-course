@@ -38,8 +38,8 @@ docker push 192.168.58.99:5000/mynginx:v1.0
 ▽▽▽▽▽▽▽▽▽▽node1▽▽▽▽▽▽▽▽▽▽
 mount /dev/sr0 /mnt/cdrom
 yum install -y showmount
-docker pull 192.168.7.10:5000/mynginx:v1.0
-docker volume create --driver local --opt type=nfs --opt o=addr=192.168.7.10,rw --opt device=:/nfs-root myvolume41-nfs
-docker run -d --name nsv41 -v myvolume41-nfs:/usr/local/nginx/html/ -p 10041:80 192.168.7.10:5000/mynginx:v1.0 
+docker pull 192.168.58.99:5000/mynginx:v1.0
+docker volume create --driver local --opt type=nfs --opt o=addr=192.168.58.99,rw --opt device=:/nfs-root myvolume41-nfs
+docker run -d --name nsv41 -v myvolume41-nfs:/usr/local/nginx/html/ -p 10041:80 192.168.58.99:5000/mynginx:v1.0 
 curl node1:10041
 △△△△△△△△△△node1△△△△△△△△△△
