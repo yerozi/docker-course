@@ -9,7 +9,7 @@ vim centos.repo
 ▽▽▽▽▽▽▽▽▽▽centos.repo▽▽▽▽▽▽▽▽▽▽
 [centos7-network]
 name=centos 7 network repo
-baseurl=http://192.168.7.10/centos7/
+baseurl=http://192.168.58.99/centos7/
 gpgcheck=0
 △△△△△△△△△△centos.repo△△△△△△△△△△
 ▽▽▽▽▽▽▽▽▽▽master▽▽▽▽▽▽▽▽▽▽
