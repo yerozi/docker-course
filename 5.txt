@@ -3,7 +3,7 @@ docker images
 docker run -d -p 5000:5000 --restart=always -v /docker-image-repo:/var/lib/registry -e REGISTRY_STORAGE_DELETE_ENABLED="true" --name myregistry registry
 docker ps -a
 ls / | grep docker-image-repo
-echo "{\"insecure-registries\":[\"192.168.7.10:5000\"]}" > /etc/docker/daemon.json
+echo "{\"insecure-registries\":[\"192.168.58.99:5000\"]}" > /etc/docker/daemon.json
 cat /etc/docker/daemon.json
 systemctl restart docker
 docker tag busybox 192.168.58.99:5000/busybox:v1
@@ -18,7 +18,7 @@ curl -X GET http://192.168.58.99:5000/v2/busybox/tags/list
 docker images | grep busybox
 docker pull 192.168.58.99：5000/busybox:v1
 docker images | grep busybox
-docker tag 192.168.58.99:5000/busybox:v1 192.168.7.10:5000/busybox:v2
+docker tag 192.168.58.99:5000/busybox:v1 192.168.58.99:5000/busybox:v2
 docker push 192.168.58.99:5000/busybox:v2
 curl -X GET http://192.168.58.99:5000/v2/_catalog
 curl -X GET http://192.168.58.99:5000/v2/busybox/tags/list
@@ -29,6 +29,6 @@ curl -v --silent -H "Accept: application/vnd.docker.distribution.manifest.v2+jso
 curl -v --silent -H "Accept: application/vnd/docker.distribution.manifest.v2+json" -X DELETE http://192.168.58.99:5000/v2/busybox/manifests/sha256:f3cfc9d0dbf931d3db4685ec659b7ac68e2a578219da4aae65427886e649b06b
 docker exec -it myregistry /bin/registry garbage-collect /etc/docker/registry/config.yml
 du -sh /docker-image-repo/
-curl -X GET http://192.168.7.10:5000/v2/_catalog
-curl -X GET http://192.168.7.10:5000/v2/busybox/tags/list
+curl -X GET http://192.168.58.99:5000/v2/_catalog
+curl -X GET http://192.168.58.99:5000/v2/busybox/tags/list
 △△△△△△△△△△master△△△△△△△△△△
